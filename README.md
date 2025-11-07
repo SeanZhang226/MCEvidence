@@ -1,91 +1,207 @@
 # MCEvidence
-A python package implementing the MARGINAL LIKELIHOODS FROM MONTE CARLO MARKOV CHAINS algorithm described in Heavens et. al. (2017)
 
-This code is tested in Python 2 version 2.7.12 and Python 3 version 3.5.2.
+A Python package implementing the **Marginal Likelihoods from Monte Carlo Markov Chains** algorithm described in [Heavens et al. (2017)](http://adsabs.harvard.edu/abs/2017arXiv170403472H).
 
-# Notes
+## Features
 
-The MCEvidence algorithm is implemented using scikit nearest neighbour code.
+- ✅ Bayesian evidence estimation using k-nearest neighbors
+- ✅ Support for **CosmoMC** and **Cobaya** MCMC chain formats
+- ✅ Automatic format detection
+- ✅ Parameter selection (cosmological only or with nuisance parameters)
+- ✅ Python 3.8+ support
 
-# Installation
+This code has been modernized and tested with Python 3.8+.
 
-To install this project into your machine using pip, do the following
-                        
-     $ git clone https://github.com/yabebalFantaye/MCEvidence
-     $ cd MCEvidence
-     $ pip install . --editable
+## Installation
 
-The "--editable" or "-e" extension in the last command is to install the project in the editable mode.
+### Requirements
 
-To install this project with pip without clonning
+- Python 3.8 or higher
+- NumPy >= 1.20.0
+- SciPy >= 1.7.0
+- scikit-learn
+- pandas
+- PyYAML (optional, required for Cobaya format support)
 
-     $ pip install git+https://github.com/yabebalFantaye/MCEvidence
-     
-# Examples
- 
-## To run the evidence estimation from an ipython terminal or notebook
+### Install from source
 
-    >> from MCEvidence import MCEvidence
-    >> MLE = MCEvidence('/path/to/chain').evidence()
-        
-You can find a more advanced example that uses MCEvidence to analyse a set of MCMC chains in [planck_mcevidence.py](./planck_mcevidence.py). The result of our companion paper [No evidence for extensions to the standard cosmological model](http://adsabs.harvard.edu/abs/2017arXiv170403467H) is obtained using this code.
+```bash
+git clone https://github.com/yabebalFantaye/MCEvidence
+cd MCEvidence
+pip install -e .
+```
 
-## To run MCEvidence from shell
+### Install directly from GitHub
 
-    $ python MCEvidence.py </path/to/chain> [optional arguments]
+```bash
+pip install git+https://github.com/yabebalFantaye/MCEvidence
+```
 
-You can check the allowed parameters by doing 
-    $ python MCEvidence.py -h
+## Quick Start
 
-The output is:
+### Basic Usage (Python)
 
-    usage: MCEvidence.py [-h] [-k KMAX] [-ic IDCHAIN] [-np NDIM] [-b BURNFRAC]
-                         [-t THINFRAC] [-v VERBOSE] [--cosmo]
-			                      root_name
+```python
+from MCEvidence import MCEvidence
 
-    Planck Chains MCEvidence. Returns the log Bayesian Evidence computed using the
-    kth NN.
+# Calculate Bayesian evidence
+mce = MCEvidence('/path/to/chain', kmax=5, burnlen=0.3)
+ln_evidence = mce.evidence()
+print(f"ln(Z) = {ln_evidence[1]:.3f}")  # k=2 is most stable
+```
 
-     positional arguments:
-       root_name             Root filename for MCMC chains or python class filename
+### Cobaya Format Support
 
-     optional arguments:
-       -h, --help            show this help message and exit
-       -k KMAX, --kmax KMAX  scikit maximum K-NN
-       -ic IDCHAIN, --idchain IDCHAIN
-                        Which chains to use - the id e.g 1 means read only
-                        *_1.txt (default=None - use all available)
-       -np NDIM, --ndim NDIM
-                        How many parameters to use (default=None - use all
-                        params)             
-       -b BURNFRAC, --burnfrac BURNFRAC, --burnin BURNFRAC, --remove BURNFRAC
-                        Burn-in fraction
-       -t THINFRAC, --thin THINFRAC, --thinfrac THINFRAC
-                        Thinning fraction
-       -vb VERBOSE, --verbose VERBOSE
-                        Verbosity of the code while running: The mapping between verbose number
-                        and the logging module levels are: 0: WARNNING, 1: INFO, 2: DEBUG
-                        setting verbose>2 outputs EVERYTHING
-       --paramsfile
-                        text file name that contains additional parameter names to be consider as cosmological parameters
-       --allparams              
-              	        Flag to consider all parameters - prior_volume is computed using all parameters. By default only 
-                        cosmological parameters listed in iscosmo_params function is considered.
-                        For arbitrary parameter names, please modify the code accordingly.
-                        If allparams is passed, consider using ndim<20 to get resonable evidence estimation.
+MCEvidence now **automatically detects and supports Cobaya MCMC chains**:
 
-       -np, --pvolume PRIORVOLUME
-                        The prior volume to use if it can not be computed internally using cosmomc *.ranges or
-                        montepython log.params files.
+```python
+from MCEvidence import MCEvidence
 
-       --cross
-                        Flag to split chain (s) into two sets to estimate cross Evidence. The DEFAULT is auto Evidence.
-                        Cross EVIDENCE is computed using two independent chains. This means Nearest Neighbour of
-                        a point  "A" in MCMC sample MC1 is searched in MCMC sample MC2.
-                        THE ERROR ON THE EVIDENCE FROM (AUTO) EVIDENCE IS LARGER THAN THE CROSS EVIDENCE BY ~SQRT(2).
-                        This is the result of : if the nearest neighbour of A is B, then the NN to B is LIKELY to be A.
+# Works with both CosmoMC and Cobaya formats
+mce = MCEvidence('/path/to/cobaya_chain', kmax=5, burnlen=0.3)
 
+# Use only cosmological parameters (recommended for model comparison)
+if hasattr(mce.gd, 'cobaya_param_info'):
+    param_info = mce.gd.cobaya_param_info
+    mce.ndim = param_info['n_cosmo']  # Use only cosmological params
 
-# If you use the code, please cite the following paper
+ln_evidence = mce.evidence()
+```
 
- .. [1] [Heavens et. al. (2017)](http://adsabs.harvard.edu/abs/2017arXiv170403472H)
+**Key differences between CosmoMC and Cobaya formats:**
+
+| Feature     | CosmoMC           | Cobaya                           |
+| ----------- | ----------------- | -------------------------------- |
+| File naming | `basename_N.txt`  | `basename.N.txt`                 |
+| Header      | No header         | `# comment lines`                |
+| Config file | `.ranges`         | `.updated.yaml` or `.input.yaml` |
+| Parameters  | All in chain file | Sampled + derived parameters     |
+
+For more details, see [COBAYA_USAGE_GUIDE.md](./COBAYA_USAGE_GUIDE.md).
+
+### Command Line Usage
+
+```bash
+# Basic usage
+python MCEvidence.py /path/to/chain
+
+# With options
+python MCEvidence.py /path/to/chain -k 5 -b 0.3 -t 1 -v 1
+
+# See all options
+python MCEvidence.py -h
+```
+
+## Command Line Options
+
+```
+usage: MCEvidence.py [-h] [-k KMAX] [-ic IDCHAIN] [-np NDIM] [-b BURNFRAC]
+                     [-t THINFRAC] [-v VERBOSE] [--cosmo] [--allparams]
+                     [--paramsfile PARAMSFILE] [--cross]
+                     root_name
+
+positional arguments:
+  root_name             Root filename for MCMC chains
+
+optional arguments:
+  -h, --help            Show help message
+  -k KMAX, --kmax KMAX  Maximum k for k-NN (default: 5, use k=2 for final results)
+  -ic IDCHAIN, --idchain IDCHAIN
+                        Which chains to use (e.g., 1 means read only *_1.txt)
+  -np NDIM, --ndim NDIM Number of parameters to use
+  -b BURNFRAC, --burnfrac BURNFRAC
+                        Burn-in fraction (default: 0.3)
+  -t THINFRAC, --thin THINFRAC
+                        Thinning fraction (default: 1, no thinning)
+  -v VERBOSE, --verbose VERBOSE
+                        Verbosity level (0: WARNING, 1: INFO, 2: DEBUG)
+  --cosmo               Use only cosmological parameters
+  --allparams           Use all parameters (including derived)
+  --paramsfile          File with additional parameter names
+  --cross               Compute cross-evidence using split chains
+```
+
+## Examples
+
+### Model Comparison
+
+```python
+from MCEvidence import MCEvidence
+
+# Calculate evidence for Model A
+mce_a = MCEvidence('/chains/model_a', kmax=5, burnlen=0.3)
+if hasattr(mce_a.gd, 'cobaya_param_info'):
+    mce_a.ndim = mce_a.gd.cobaya_param_info['n_cosmo']
+ln_Z_a = mce_a.evidence()[1]  # Use k=2
+
+# Calculate evidence for Model B
+mce_b = MCEvidence('/chains/model_b', kmax=5, burnlen=0.3)
+if hasattr(mce_b.gd, 'cobaya_param_info'):
+    mce_b.ndim = mce_b.gd.cobaya_param_info['n_cosmo']
+ln_Z_b = mce_b.evidence()[1]  # Use k=2
+
+# Bayes factor
+delta_ln_Z = ln_Z_b - ln_Z_a
+print(f"Δln(Z) = {delta_ln_Z:.3f}")
+print(f"Bayes factor = {np.exp(delta_ln_Z):.2e}")
+
+# Interpretation
+if abs(delta_ln_Z) < 1:
+    print("No strong preference")
+elif delta_ln_Z > 2.5:
+    print("Strong evidence for Model B")
+elif delta_ln_Z < -2.5:
+    print("Strong evidence for Model A")
+```
+
+### Jupyter Notebook Example
+
+See [notebook/get_lnZ.ipynb](./notebook/get_lnZ.ipynb) for a complete interactive example with visualization.
+
+### Advanced Example
+
+See [planck_mcevidence.py](./planck_mcevidence.py) for an advanced example analyzing Planck MCMC chains, used in the companion paper [No evidence for extensions to the standard cosmological model](http://adsabs.harvard.edu/abs/2017arXiv170403467H).
+
+## Documentation
+
+- [COBAYA_USAGE_GUIDE.md](./COBAYA_USAGE_GUIDE.md) - Detailed guide for using MCEvidence with Cobaya chains
+- [COBAYA_IMPLEMENTATION_SUMMARY.md](./COBAYA_IMPLEMENTATION_SUMMARY.md) - Technical implementation details
+
+## Citation
+
+If you use this code, please cite:
+
+```bibtex
+@article{Heavens2017,
+  author = {Heavens, Alan and Fantaye, Yabebal and Sellentin, Elena and Eggers, Hans and Hosenie, Zafiirah and Kroon, Steve and Mootoovaloo, Arrykrishna},
+  title = {No evidence for extensions to the standard cosmological model},
+  journal = {Physical Review Letters},
+  year = {2017},
+  volume = {119},
+  pages = {101301},
+  doi = {10.1103/PhysRevLett.119.101301}
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Changelog
+
+### Version 2.0 (2025)
+
+- ✅ Added support for Cobaya MCMC chain format
+- ✅ Automatic format detection (CosmoMC vs Cobaya)
+- ✅ Parameter classification (cosmological vs nuisance vs derived)
+- ✅ Modernized for Python 3.8+
+- ✅ Improved dependencies (scikit-learn, updated NumPy/SciPy)
+- ✅ Bug fixes (thin() method, DistanceMetric import, format detection)
+
+### Version 1.0
+
+- Initial release with CosmoMC support

@@ -87,3 +87,24 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Test files and outputs
+test_*.py
+*_test.py
+evidence_results.csv
+model_comparison.csv
+
+# Notebook outputs
+notebook/*.ipynb_checkpoints/
+notebook/*.csv
+notebook/*.png
+notebook/*.pdf
+
+# Analysis documents (temporary)
+ARCHITECTURE_ANALYSIS.md
+IMPROVEMENTS_LOG.md
+COBAYA_FORMAT_ANALYSIS.md

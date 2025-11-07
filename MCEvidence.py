@@ -66,7 +66,7 @@ logger = logging.getLogger(__name__)
 __author__ = "Yabebal Fantaye"
 __email__ = "yabi@aims.ac.za"
 __license__ = "MIT"
-__version__ = "1.0.0"  # Semantic versioning (previously: 17-04-2018)
+__version__ = "2.0.0"  # Major update: Cobaya support, Python 3.8+ modernization
 __status__ = "Development"
 
 desc = "Planck Chains MCEvidence. Returns the log Bayesian Evidence computed using the kth NN"
