@@ -162,6 +162,18 @@ See [notebook/get_lnZ.ipynb](./notebook/get_lnZ.ipynb) for a complete interactiv
 
 See [planck_mcevidence.py](./planck_mcevidence.py) for an advanced example analyzing Planck MCMC chains, used in the companion paper [No evidence for extensions to the standard cosmological model](http://adsabs.harvard.edu/abs/2017arXiv170403467H).
 
+
+## Cobaya Batch Acceptance Test
+
+To validate Cobaya chain import end-to-end, install optional dependencies and run:
+
+```bash
+pip install -e '.[cobaya,getdist]'
+python scripts/cobaya_batch_acceptance.py --datasets 3 --max-samples 160
+```
+
+The script generates multiple Cobaya chain sets, imports them with `MCEvidence`, computes evidence, and fails if outputs are not finite.
+
 ## Documentation
 
 - [COBAYA_USAGE_GUIDE.md](./COBAYA_USAGE_GUIDE.md) - Detailed guide for using MCEvidence with Cobaya chains
