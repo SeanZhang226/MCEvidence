@@ -1,0 +1,50 @@
+likelihood:
+  gaussian_mixture:
+    means:
+    - - 0.0
+      - 0.0
+      - 0.0
+      - 0.0
+    covs:
+    - - - 1.0
+        - 0.2
+        - 0.1
+        - 0.0
+      - - 0.2
+        - 1.2
+        - 0.05
+        - -0.1
+      - - 0.1
+        - 0.05
+        - 0.8
+        - 0.15
+      - - 0.0
+        - -0.1
+        - 0.15
+        - 1.1
+params:
+  omega_b:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  omega_cdm:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  n_s:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  A_planck:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+sampler:
+  mcmc:
+    max_samples: 120
+    burn_in: 0
+output: cobaya_from_cobaya

@@ -3,7 +3,7 @@
 import io
 import re
 import os
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def find_version():
@@ -23,9 +23,9 @@ setup(
     author="Yabebal Fantaye",
     author_email="yabi@aims.ac.za",
     url="https://github.com/yabebalFantaye/MCEvidence",
-    packages=[""],
-    scripts=["MCEvidence.py"],
-    test_suite="example.py",
+    packages=find_packages(include=["mcevidence", "mcevidence.*"]),
+    py_modules=["MCEvidence"],
+    entry_points={"console_scripts": ["mcevidence=mcevidence.core:main"]},
     python_requires=">=3.8",
     # package_data={'planck_fullgrid_R2': ['AllChains','SingleChains']}
     install_requires=[
@@ -36,7 +36,8 @@ setup(
     ],
     extras_require={
         "getdist": ["getdist>=1.3.0"],
-        "cobaya": ["cobaya>=3.0.0"],
+        "cobaya": ["cobaya>=3.0.0", "PyYAML>=6.0"],
+        "dev": ["pytest>=8.0", "pytest-cov>=5.0"],
     },
     classifiers=[
         "Development Status :: 4 - Beta",
