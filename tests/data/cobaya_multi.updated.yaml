@@ -1,0 +1,27 @@
+params:
+  p1:
+    prior: {min: -4, max: 4}
+    latex: p1
+  p2:
+    prior: {min: -4, max: 4}
+    latex: p2
+  p3:
+    prior: {min: -4, max: 4}
+    latex: p3
+  p4:
+    prior: {min: -4, max: 4}
+    latex: p4
+  p5:
+    prior: {min: -4, max: 4}
+    latex: p5
+  p6:
+    prior: {min: -4, max: 4}
+    latex: p6
+  A_planck:
+    prior: {min: 0.8, max: 1.2}
+    latex: A_{Planck}
+  calib_100T:
+    prior: {min: 0.95, max: 1.05}
+    latex: c_{100T}
+  chi2:
+    derived: true

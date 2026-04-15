@@ -1,0 +1,9 @@
+params:
+  p1:
+    prior: {min: -5, max: 5}
+    latex: p_1
+  p2:
+    prior: {min: -5, max: 5}
+    latex: p_2
+  chi2:
+    derived: true

@@ -1,0 +1,102 @@
+theory: null
+likelihood:
+  gaussian_mixture:
+    means:
+    - - 0.0
+      - 0.0
+      - 0.0
+      - 0.0
+    covs:
+    - - - 1.0
+        - 0.2
+        - 0.1
+        - 0.0
+      - - 0.2
+        - 1.2
+        - 0.05
+        - -0.1
+      - - 0.1
+        - 0.05
+        - 0.8
+        - 0.15
+      - - 0.0
+        - -0.1
+        - 0.15
+        - 1.1
+    weights: null
+    input_params_prefix: ''
+    output_params_prefix: ''
+    derived: false
+    delay: 0
+    type: []
+    speed: -1
+    stop_at_error: false
+    version: null
+    input_params:
+    - omega_b
+    - omega_cdm
+    - n_s
+    - A_planck
+    output_params: []
+params:
+  omega_b:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  omega_cdm:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  n_s:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+  A_planck:
+    prior:
+      min: -4
+      max: 4
+    proposal: 0.35
+sampler:
+  mcmc:
+    sampler_type: mcmc
+    supports_periodic_params: true
+    burn_in: 0
+    max_tries: 40d
+    covmat: null
+    covmat_params: null
+    proposal_scale: 2.4
+    output_every: 60s
+    learn_every: 40d
+    temperature: 1
+    learn_proposal: true
+    learn_proposal_Rminus1_max: 2.0
+    learn_proposal_Rminus1_max_early: 30.0
+    learn_proposal_Rminus1_min: 0.0
+    max_samples: 120
+    Rminus1_stop: 0.01
+    Rminus1_cl_stop: 0.2
+    Rminus1_cl_level: 0.95
+    Rminus1_single_split: 4
+    measure_speeds: true
+    oversample_power: 0.4
+    oversample_thin: true
+    drag: false
+    blocking:
+    - - 1
+      - - omega_b
+        - omega_cdm
+        - n_s
+        - A_planck
+    callback_function: null
+    callback_every: null
+    seed: null
+    check_every: null
+    oversample: null
+    drag_limits: null
+    fallback_covmat_scale: 4
+    version: 3.6.2
+output: cobaya_from_cobaya
+version: 3.6.2
